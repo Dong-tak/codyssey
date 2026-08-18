@@ -2,7 +2,7 @@
 
 ## 저장소
 
-- GitHub: https://github.com/Dong-tak/quiz-game-practice
+- GitHub: https://github.com/Dong-tak/codyssey/tree/main/E1-2/quiz-game-practice
 - 실행 환경: Python 3.10 이상, Apple Git 2.50.1, macOS arm64
 - 확인 기록: 터미널 캡처는 Python 3.12.7, 자동 검증 로그는 Python 3.14.3에서 수행
 

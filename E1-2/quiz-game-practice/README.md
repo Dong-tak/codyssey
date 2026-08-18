@@ -3,7 +3,7 @@
 Python 기본 문법과 객체 지향 설계, JSON 파일 입출력, Git 작업 흐름을
 연습하기 위해 만든 터미널 기반 퀴즈 프로그램입니다.
 
-- GitHub: https://github.com/Dong-tak/quiz-game-practice
+- GitHub: https://github.com/Dong-tak/codyssey/tree/main/E1-2/quiz-game-practice
 - 제출 및 검증 자료: [docs/SUBMISSION_EVIDENCE.md](docs/SUBMISSION_EVIDENCE.md)
 
 ## 설명 순서

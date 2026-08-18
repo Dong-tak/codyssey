@@ -3,14 +3,14 @@
 > 터미널(CLI) · Docker(컨테이너) · Git/GitHub 를 직접 손으로 세팅하고,
 > **실행 결과(로그 / 접속 / 데이터 유지)로 검증한** 개발 워크스테이션 구축 기록입니다.
 
-- **제출 저장소**: https://github.com/Dong-tak/dev-workstation (Public)
+- **제출 경로**: https://github.com/Dong-tak/codyssey/tree/main/E1-1 (Public)
 - **원본 로그 파일**: [`logs/`](logs/) — 본 문서의 모든 코드블록은 이 디렉토리의 실제 실행 로그에서 발췌했습니다.
 - **실습 캡처 이미지**: [`docs/screenshots/`](docs/screenshots/) — 명령어 입력과 출력이 함께 보이도록 캡처했습니다.
 
 ### 디렉토리 구조
 
 ```
-dev-workstation/
+E1-1/
 ├── README.md                  # 기술 문서 (이 파일)
 ├── .gitignore
 ├── my-web/                    # 제출용 웹 서버 컨테이너
