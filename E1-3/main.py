@@ -11,10 +11,28 @@ import time
 
 
 # 두 점수의 차이가 이 값보다 작으면 같은 값으로 간주함
-EPSILON = 1e-9
+EPSILON = 1e-9 # 10억분의 1
 
 # 필터와 패턴이 들어있는 데이터 파일 이름
 DATA_FILE = 'data.json'
+
+# 성능 측정 반복 횟수. 한 번만 재면 그 순간의 시스템 상태에 크게 흔들림
+MEASURE_REPEAT = 10
+
+# 원본 표기를 내부 표준 라벨로 바꾸는 표.
+# 새 라벨이 생기면 여기 한 줄만 추가하면 되고 판정·출력 로직은 그대로 둠.
+LABEL_MAP = {
+    '+': 'Cross',
+    'x': 'X',
+    'cross': 'Cross',
+}
+
+# 모드 1에서 표준 라벨을 화면 표시용 이름으로 바꾸는 표.
+# 이 모드는 사용자가 필터를 직접 넣어 정답이 없으므로 A/B 로 부름.
+MODE1_DISPLAY = {
+    'Cross': 'A',
+    'X': 'B',
+}
 
 
 # ============================================================
@@ -91,18 +109,28 @@ def normalize_label(raw_label):
     """서로 다른 표기의 라벨을 표준 라벨('Cross' 또는 'X')로 바꿔 반환함."""
     # 같은 개념을 데이터마다 다르게 부름.
     # expected 는 '+' 와 'x' 를 쓰고, filters 의 키는 'cross' 와 'x' 를 씀.
-    # 딕셔너리로 둔 이유는 새 라벨이 생겨도 여기 한 줄만 추가하면 되기 때문임.
-    label_map = {'+': 'Cross', 'x': 'X', 'cross': 'Cross'}
-
+    # 매핑표는 파일 상단 LABEL_MAP 에 두어 확장 지점을 한곳에 모음.
     # 대소문자 차이를 없애고 매핑을 찾음
     key = raw_label.lower()
 
     # 등록되지 않은 라벨이면 예외를 던져서 부른 쪽이 그 케이스만
     # 실패 처리하도록 넘김. 여기서 임의로 결정하지 않음.
-    if key not in label_map:
+    if key not in LABEL_MAP:
         raise ValueError(f'알 수 없는 라벨입니다: {raw_label!r}')
 
-    return label_map[key]
+    return LABEL_MAP[key]
+
+
+def format_mode1_verdict(verdict):
+    """모드 1의 판정 결과를 화면에 보여줄 문구로 바꿔 반환함."""
+    # 이 모드는 사용자가 즉석에서 필터를 넣는 것이라 정답이 없음.
+    # 그래서 동점은 실패가 아니라 '가릴 수 없음'이라는 결과로만 알리고,
+    # 어떤 기준으로 그렇게 봤는지 함께 밝힘.
+    if verdict == 'UNDECIDED':
+        return f'판정 불가 (|A-B| < {EPSILON})'
+
+    # 그 외에는 표준 라벨을 이 모드의 표시 이름으로 바꿔서 돌려줌
+    return MODE1_DISPLAY[verdict]
 
 
 def make_pattern(n, kind):
@@ -204,14 +232,7 @@ def run_mode1():
     avg_ms = measure(pattern, filter_a)
     print(f'연산 시간(평균/10회): {avg_ms:.3f} ms')
 
-    if verdict == 'UNDECIDED':
-        # 이 모드는 사용자가 즉석에서 필터를 넣는 것이라 정답이 없음.
-        # 그래서 동점은 실패가 아니라 '가릴 수 없음'이라는 결과로만 알림.
-        print(f'판정: 판정 불가 (|A-B| < {EPSILON})')
-    else:
-        # 내부 표준 라벨을 이 모드의 표시 이름으로 바꿔서 보여줌
-        display_map = {'Cross': 'A', 'X': 'B'}
-        print(f'판정: {display_map[verdict]}')
+    print(f'판정: {format_mode1_verdict(verdict)}')
 
     # 4단계: 방금 사용한 3x3 크기의 연산 성능을 표로 정리함
     print_section('[4] 성능 분석 (3x3, 평균/10회)')
@@ -328,11 +349,17 @@ def run_mode2():
             status = 'PASS' if verdict == expected else 'FAIL'
             print_case_result(case_id, score_cross, score_x, verdict, expected, status)
 
-            # 실패한 이유를 나중에 요약에 쓰려고 문장으로 남김
+            # 실패한 이유를 나중에 요약에 쓰려고 문장으로 남김.
+            # 동점일 때는 실제 점수 차이를 함께 적어 두면 나중에 원인을
+            # 따질 때 '수치 비교 문제'임을 바로 확인할 수 있음.
             if status == 'PASS':
                 reason = ''
             elif verdict == 'UNDECIDED':
-                reason = '동점(UNDECIDED) 처리 규칙에 따라 FAIL'
+                gap = abs(score_cross - score_x)
+                reason = (
+                    f'동점(UNDECIDED) 처리 규칙에 따라 FAIL '
+                    f'(두 점수 차이 {gap:.2e} < {EPSILON})'
+                )
             else:
                 reason = f'판정({verdict})이 expected({expected})와 다름'
 
@@ -380,7 +407,7 @@ def run_mode2():
 # 4부. 성능 측정
 # ============================================================
 
-def measure(pattern, filter_grid, repeat=10):
+def measure(pattern, filter_grid, repeat=MEASURE_REPEAT):
     """MAC 연산을 여러 번 반복해 평균 시간을 밀리초로 반환함."""
     times = []
 
@@ -425,7 +452,7 @@ def mac_1d(pattern_1d, filter_1d):
     return total
 
 
-def measure_1d(pattern, filter_grid, repeat=10):
+def measure_1d(pattern, filter_grid, repeat=MEASURE_REPEAT):
     """1차원 방식의 MAC 연산 평균 시간을 밀리초로 반환함."""
     # 변환은 측정 구간 밖에서 미리 해둠.
     # 비교 대상은 연산 자체이므로 변환 비용이 섞이면 공정하지 않음.
