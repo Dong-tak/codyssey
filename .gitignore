@@ -33,6 +33,7 @@
 .bkit/
 .omc/
 .codex/
+/.legacy-git/
 **/.bkit/
 **/.omc/
 **/.claude/
