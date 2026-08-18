@@ -1,0 +1,17 @@
+[2026-08-11] 개발 환경
+
+$ python3 --version
+Python 3.14.3
+
+$ git --version
+git version 2.50.1 (Apple Git-155)
+
+$ git config --get user.name
+Kim dong tak
+
+$ uname -srm
+Darwin 25.5.0 arm64
+
+결과: PASS
+- 과제 요구 버전인 Python 3.10 이상을 사용함
+- macOS arm64 환경에서 Git 설정을 확인함

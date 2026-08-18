@@ -1,0 +1,90 @@
+$ cat docker-compose.yml
+services:
+  # 메인 웹 서버: 로컬 Dockerfile 로 빌드
+  web:
+    build: .
+    image: my-web:1.0
+    container_name: web-compose
+    ports:
+      # "호스트포트:컨테이너포트" — 환경변수로 호스트 포트를 바꿀 수 있게 분리
+      - "${WEB_PORT:-8081}:80"
+    environment:
+      # 설정과 코드의 분리: 이미지를 다시 빌드하지 않고 동작 모드를 바꿀 수 있다
+      APP_ENV: ${APP_ENV:-dev}
+    depends_on:
+      - api
+
+  # 보조 서비스: 같은 Compose 네트워크에 붙는 두 번째 컨테이너
+  api:
+    image: nginx:1.27-alpine
+    container_name: api-compose
+    # 호스트에 포트를 열지 않는다 → 오직 컨테이너 네트워크 내부에서만 접근 가능
+    expose:
+      - "80"
+    command: >
+      sh -c "echo '{\"service\":\"api\",\"status\":\"ok\"}' > /usr/share/nginx/html/index.html
+      && nginx -g 'daemon off;'"
+
+$ docker compose up -d 2>&1 | tail -6
+ Container web-compose Creating 
+ Container web-compose Created 
+ Container api-compose Starting 
+ Container api-compose Started 
+ Container web-compose Starting 
+ Container web-compose Started 
+
+$ docker compose ps
+NAME          IMAGE               COMMAND                  SERVICE   CREATED        STATUS                                     PORTS
+api-compose   nginx:1.27-alpine   "/docker-entrypoint.…"   api       1 second ago   Up Less than a second                      80/tcp
+web-compose   my-web:1.0          "/docker-entrypoint.…"   web       1 second ago   Up Less than a second (health: starting)   0.0.0.0:8081->80/tcp, [::]:8081->80/tcp
+
+$ docker compose port web 80
+0.0.0.0:8081
+
+$ docker compose port api 80 2>&1 || echo '=> api 서비스는 호스트 포트 매핑이 없다 (내부 전용)'
+invalid IP:0
+
+$ curl -s -o /dev/null -w 'web(호스트 8081) -> HTTP %{http_code}\n' http://localhost:8081
+web(호스트 8081) -> HTTP 200
+
+$ docker compose exec web wget -qO- http://api/
+{"service":"api","status":"ok"}
+
+$ docker compose exec web sh -c 'getent hosts api'
+192.168.97.2      api  api
+
+$ docker network ls | grep my-web
+16405ecc641e   my-web_default   bridge    local
+
+$ docker compose logs --tail 3 api
+api-compose  | 2026/07/30 06:55:59 [notice] 1#1: start worker process 16
+api-compose  | 2026/07/30 06:55:59 [notice] 1#1: start worker process 17
+api-compose  | 192.168.97.3 - - [30/Jul/2026:06:55:59 +0000] "GET / HTTP/1.1" 200 32 "-" "Wget" "-"
+
+$ WEB_PORT=8085 APP_ENV=prod docker compose up -d 2>&1 | tail -4
+ Container web-compose Recreate 
+ Container web-compose Recreated 
+ Container web-compose Starting 
+ Container web-compose Started 
+
+$ docker compose ps --format 'table {{.Name}}\t{{.Ports}}'
+NAME          PORTS
+api-compose   80/tcp
+web-compose   0.0.0.0:8085->80/tcp, [::]:8085->80/tcp
+
+$ docker compose exec web printenv APP_ENV
+prod
+
+
+$ curl -s -o /dev/null -w '환경변수로 바뀐 포트 8085 -> HTTP %{http_code}\n' http://localhost:8085
+환경변수로 바뀐 포트 8085 -> HTTP 200
+
+$ docker compose down 2>&1 | tail -4
+ Container api-compose Removing 
+ Container api-compose Removed 
+ Network my-web_default Removing 
+ Network my-web_default Removed 
+
+$ docker compose ps -a
+NAME      IMAGE     COMMAND   SERVICE   CREATED   STATUS    PORTS
+

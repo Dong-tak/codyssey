@@ -1,0 +1,133 @@
+$ cat Dockerfile
+# (1) 베이스 이미지: 태그를 고정해 재현성 확보 + alpine으로 경량화
+FROM nginx:1.27-alpine
+
+# (2) 이미지 메타데이터: 누가/무엇을 위해 만든 이미지인지 이미지 자체에 기록
+LABEL org.opencontainers.image.title="my-web"
+LABEL org.opencontainers.image.description="nginx 기반 정적 웹 커스텀 이미지 (개발 워크스테이션 과제)"
+LABEL org.opencontainers.image.version="1.0"
+
+# (3) 환경변수: 설정을 코드에서 분리 (docker run -e 로 덮어쓰기 가능)
+ENV APP_ENV=dev
+
+# (4) 정적 콘텐츠 교체: 베이스 이미지의 기본 페이지를 내 페이지로 덮어씀
+COPY index.html /usr/share/nginx/html/index.html
+
+# (5) 문서화 목적의 포트 선언 (실제 매핑은 docker run -p 로 수행)
+EXPOSE 80
+
+# (6) 헬스체크: 컨테이너가 "살아있음"이 아니라 "정상 응답함"을 스스로 점검
+HEALTHCHECK --interval=10s --timeout=3s --start-period=5s --retries=3 \
+  CMD wget -qO- http://localhost/ > /dev/null || exit 1
+
+$ docker build -t my-web:1.0 .
+#0 building with "orbstack" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 1.06kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/nginx:1.27-alpine
+#2 DONE 6.0s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [internal] load build context
+#4 transferring context: 32B done
+#4 DONE 0.0s
+
+#5 [1/2] FROM docker.io/library/nginx:1.27-alpine@sha256:65645c7bb6a0661892a8b03b89d0743208a18dd2f3f17a54ef4b76fb8e2f2a10
+... (레이어 다운로드 진행률 190줄 생략) ...
+#5 resolve docker.io/library/nginx:1.27-alpine@sha256:65645c7bb6a0661892a8b03b89d0743208a18dd2f3f17a54ef4b76fb8e2f2a10 0.0s done
+#5 DONE 0.2s
+
+#5 [1/2] FROM docker.io/library/nginx:1.27-alpine@sha256:65645c7bb6a0661892a8b03b89d0743208a18dd2f3f17a54ef4b76fb8e2f2a10
+#5 DONE 315.2s
+
+#5 [1/2] FROM docker.io/library/nginx:1.27-alpine@sha256:65645c7bb6a0661892a8b03b89d0743208a18dd2f3f17a54ef4b76fb8e2f2a10
+#5 DONE 315.3s
+
+#5 [1/2] FROM docker.io/library/nginx:1.27-alpine@sha256:65645c7bb6a0661892a8b03b89d0743208a18dd2f3f17a54ef4b76fb8e2f2a10
+#5 DONE 315.5s
+
+#6 [2/2] COPY index.html /usr/share/nginx/html/index.html
+#6 DONE 0.1s
+
+#7 exporting to image
+#7 exporting layers 0.1s done
+#7 exporting manifest sha256:bfe6b7b3716f8bf7027bf78a902e9a1dcf2c76003f5b0177a2f28337adc48a77
+#7 exporting manifest sha256:bfe6b7b3716f8bf7027bf78a902e9a1dcf2c76003f5b0177a2f28337adc48a77 done
+#7 exporting config sha256:78ad90ce5c46b1520e890c4a536b38303236f80b4540b27d0759335371a1e8c3 done
+#7 exporting attestation manifest sha256:300c4f455a9b75d11af7ce51a371bf893a5ad8d81d30e8420eded9f6ec581eb5 0.0s done
+#7 exporting manifest list sha256:fe9b25bb078d1f688e991ccdeab22c73deebbcf016d5f9bffc3456e7c0fc3413 done
+#7 naming to docker.io/library/my-web:1.0 done
+#7 unpacking to docker.io/library/my-web:1.0 0.0s done
+#7 DONE 0.1s
+
+View build details: docker-desktop://dashboard/build/orbstack/orbstack/x94nprb4odfea7z02bh3loj90
+
+$ docker images my-web
+REPOSITORY   TAG       IMAGE ID       CREATED                  SIZE
+my-web       1.0       fe9b25bb078d   Less than a second ago   77.3MB
+my-web       latest    f75941c28fcd   5 hours ago              255MB
+
+$ docker run -d -p 8082:80 --name my-web-8082 my-web:1.0
+da0d6032185e894ec29f6e6ce517b881358c2caeec22a74efb006d4615adf883
+
+$ docker run -d -p 8083:80 --name my-web-8083 my-web:1.0
+1edac1096705417219f52ec05c7c93fd1b6c8238bb123ee952a23023690c7aa7
+
+$ docker ps --filter name=my-web-808
+CONTAINER ID   IMAGE        COMMAND                  CREATED                  STATUS                                     PORTS                                     NAMES
+1edac1096705   my-web:1.0   "/docker-entrypoint.…"   Less than a second ago   Up Less than a second (health: starting)   0.0.0.0:8083->80/tcp, [::]:8083->80/tcp   my-web-8083
+da0d6032185e   my-web:1.0   "/docker-entrypoint.…"   1 second ago             Up Less than a second (health: starting)   0.0.0.0:8082->80/tcp, [::]:8082->80/tcp   my-web-8082
+
+$ curl -i http://localhost:8082
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+100   206  100   206    0     0  52929      0 --:--:-- --:--:-- --:--:-- 68666
+HTTP/1.1 200 OK
+Server: nginx/1.27.5
+Date: Thu, 30 Jul 2026 06:54:02 GMT
+Content-Type: text/html
+Content-Length: 206
+Last-Modified: Thu, 30 Jul 2026 02:15:25 GMT
+Connection: keep-alive
+ETag: "6a6ab3bd-ce"
+Accept-Ranges: bytes
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>My Docker Page</title>
+</head>
+<body>
+  <h1>🐳 내가 만든 Docker 이미지!</h1>
+  <p>nginx + 커스텀 HTML 성공!</p>
+</body>
+</html>
+
+$ curl -s http://localhost:8083
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>My Docker Page</title>
+</head>
+<body>
+  <h1>🐳 내가 만든 Docker 이미지!</h1>
+  <p>nginx + 커스텀 HTML 성공!</p>
+</body>
+</html>
+
+$ docker exec my-web-8082 printenv APP_ENV
+dev
+
+$ docker inspect --format '{{.Name}} health={{.State.Health.Status}}' my-web-8082
+/my-web-8082 health=starting
+

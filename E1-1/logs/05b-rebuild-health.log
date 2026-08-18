@@ -1,0 +1,52 @@
+$ docker build -t my-web:1.0 . 2>&1 | tail -12
+#7 exporting to image
+#7 exporting layers 0.1s done
+#7 exporting manifest sha256:46f66de5851e87a39a468f134f14a38aadf50f66319309d63abd6aba2cc1a73f 0.0s done
+#7 exporting config sha256:7bf8196e4d48031c0c4467a5702ab737ce99f5f74fa92f63bce2ff4fa400d5db
+#7 exporting config sha256:7bf8196e4d48031c0c4467a5702ab737ce99f5f74fa92f63bce2ff4fa400d5db 0.0s done
+#7 exporting attestation manifest sha256:e148e8c9cd85f82826be64d50bb802cdae18cfe5225062fd5f14cee34cad0187 0.0s done
+#7 exporting manifest list sha256:237cbdf74cb60ba2d441504d6a2edd72bde9f299f4bf101880313f2949e730a7 0.0s done
+#7 naming to docker.io/library/my-web:1.0 done
+#7 unpacking to docker.io/library/my-web:1.0 0.0s done
+#7 DONE 0.2s
+
+View build details: docker-desktop://dashboard/build/orbstack/orbstack/1vd0346er2fdwfl9r74bx3ans
+
+$ docker images my-web
+REPOSITORY   TAG       IMAGE ID       CREATED                  SIZE
+my-web       1.0       237cbdf74cb6   Less than a second ago   77.3MB
+my-web       latest    f75941c28fcd   5 hours ago              255MB
+
+$ docker rm -f my-web-8082 my-web-8083
+my-web-8082
+my-web-8083
+
+$ docker run -d -p 8082:80 --name my-web-8082 my-web:1.0
+c0f67acd51134aa3d7c3466e9641ff7072dd5d081fb8020cfee436b0130eb3f3
+
+$ docker run -d -p 8083:80 -e APP_ENV=prod --name my-web-8083 my-web:1.0
+403c1cd04952da8efd49b0b998c2eeea094556141d1304f5f8b2f770c5927cea
+
+$ docker ps --filter name=my-web-808 --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'
+NAMES         STATUS                                     PORTS
+my-web-8083   Up Less than a second (health: starting)   0.0.0.0:8083->80/tcp, [::]:8083->80/tcp
+my-web-8082   Up Less than a second (health: starting)   0.0.0.0:8082->80/tcp, [::]:8082->80/tcp
+
+$ curl -s http://localhost:8082 | grep -E 'h1|p>'
+  <h1>🐳 내가 만든 Docker 이미지!</h1>
+  <p>nginx + 커스텀 HTML 성공!</p>
+  <p>바인드 마운트로 재빌드 없이 반영된 문장입니다. (2026-07-30)</p>
+
+$ curl -s -o /dev/null -w 'HTTP %{http_code} from port 8083\n' http://localhost:8083
+HTTP 200 from port 8083
+
+$ docker exec my-web-8082 printenv APP_ENV
+dev
+
+$ docker exec my-web-8083 printenv APP_ENV
+prod
+
+$ docker inspect --format '{{.Name}} health={{.State.Health.Status}}' my-web-8082 my-web-8083
+/my-web-8082 health=healthy
+/my-web-8083 health=healthy
+

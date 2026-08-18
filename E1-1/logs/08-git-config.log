@@ -1,0 +1,45 @@
+$ git config --global user.name
+Kim dong tak
+
+$ git config --global user.email | sed -E 's/^(..).*@/\1****@/'
+59****@users.noreply.github.com
+
+$ git config --global init.defaultBranch
+main
+
+$ git config --list | grep -E '^(user|init|core|credential)' | sed -E 's/(user.email=..).*@/\1****@/'
+credential.helper=osxkeychain
+init.defaultbranch=main
+user.name=Kim dong tak
+user.email=59****@users.noreply.github.com
+init.defaultbranch=main
+core.repositoryformatversion=0
+core.filemode=true
+core.bare=false
+core.logallrefupdates=true
+core.ignorecase=true
+core.precomposeunicode=true
+
+$ git remote -v
+origin	https://github.com/Dong-tak/dev-workstation.git (fetch)
+origin	https://github.com/Dong-tak/dev-workstation.git (push)
+
+$ git branch --show-current
+main
+
+$ git log --oneline -8
+bd0bc9c docs: Docker Compose 실습 내용 추가
+d6c8ced feat: my-web 커스텀 이미지 및 docker-compose 설정 추가
+c681883 docs: Dockerfile 작성 및 커스텀 이미지 빌드 내용 추가
+e38744f Add Dockerfile for custom nginx image
+935ef90 Update README.md
+d3163ab Add .gitignore file
+72a0a6a docs: nginx 컨테이너 실습 내용 README에 추가
+c85810b Update README.md
+
+$ git status --short
+ M my-web/Dockerfile
+?? .bkit/
+?? .omc/
+?? practice/
+

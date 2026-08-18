@@ -1,0 +1,57 @@
+[2026-08-11] Git clone / push / pull 실습
+
+원격 저장소:
+https://github.com/Dong-tak/quiz-game-practice.git
+
+1. 기존 개발 디렉터리의 완성 커밋을 main에 push
+
+$ git push origin main
+To https://github.com/Dong-tak/quiz-game-practice.git
+   a46a85e..420190f  main -> main
+
+2. 별도 디렉터리에 저장소 clone
+
+$ git clone https://github.com/Dong-tak/quiz-game-practice.git /Users/tak-e/develop/codyssey/quiz-game-practice-clone
+Cloning into '/Users/tak-e/develop/codyssey/quiz-game-practice-clone'...
+
+$ git log -1 --oneline --decorate
+420190f (HEAD -> main, origin/main, origin/HEAD) Docs: README 및 기능 검증 기록 보강
+
+3. clone 디렉터리에서 README 수정 후 commit
+
+$ git add README.md
+$ git commit -m "Docs: clone/pull 실습 확인 문구 추가"
+[main 3fd16ba] Docs: clone/pull 실습 확인 문구 추가
+ 1 file changed, 5 insertions(+)
+
+4. clone 디렉터리에서 변경을 GitHub에 push
+
+$ git push origin main
+To https://github.com/Dong-tak/quiz-game-practice.git
+   420190f..3fd16ba  main -> main
+
+5. 기존 개발 디렉터리에서 변경을 pull
+
+$ git pull --ff-only origin main
+From https://github.com/Dong-tak/quiz-game-practice
+ * branch            main       -> FETCH_HEAD
+   420190f..3fd16ba  main       -> origin/main
+Updating 420190f..3fd16ba
+Fast-forward
+ README.md | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+6. 기존 개발 디렉터리에 반영됐는지 확인
+
+$ git reflog -1 --date=iso
+3fd16ba HEAD@{2026-08-11 15:02:14 +0900}: pull --ff-only origin main: Fast-forward
+
+$ git log -1 --oneline --decorate
+3fd16ba (HEAD -> main, origin/main, origin/HEAD) Docs: clone/pull 실습 확인 문구 추가
+
+README.md의 "Clone/Pull 실습 확인" 문구도 기존 디렉터리에서 확인했다.
+
+결과: PASS
+- 별도 디렉터리 clone 완료
+- clone에서 수정·commit·push 완료
+- 원본 디렉터리 pull 및 fast-forward 반영 완료

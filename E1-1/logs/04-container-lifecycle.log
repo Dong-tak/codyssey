@@ -1,0 +1,98 @@
+$ docker run --rm hello-world
+
+Hello from Docker!
+This message shows that your installation appears to be working correctly.
+
+To generate this message, Docker took the following steps:
+ 1. The Docker client contacted the Docker daemon.
+ 2. The Docker daemon pulled the "hello-world" image from the Docker Hub.
+    (arm64v8)
+ 3. The Docker daemon created a new container from that image which runs the
+    executable that produces the output you are currently reading.
+ 4. The Docker daemon streamed that output to the Docker client, which sent it
+    to your terminal.
+
+To try something more ambitious, you can run an Ubuntu container with:
+ $ docker run -it ubuntu bash
+
+Share images, automate workflows, and more with a free Docker ID:
+ https://hub.docker.com/
+
+For more examples and ideas, visit:
+ https://docs.docker.com/get-started/
+
+
+$ docker images ubuntu
+REPOSITORY   TAG       IMAGE ID       CREATED       SIZE
+ubuntu       latest    3131b4cc82a7   2 weeks ago   178MB
+
+$ docker run -i --name ubuntu-test ubuntu bash -c 'ls /; echo "hello from ubuntu"; head -3 /etc/os-release'
+bin
+boot
+dev
+etc
+home
+lib
+media
+mnt
+opt
+proc
+root
+run
+sbin
+srv
+sys
+tmp
+usr
+var
+hello from ubuntu
+PRETTY_NAME="Ubuntu 26.04 LTS"
+NAME="Ubuntu"
+VERSION_ID="26.04"
+
+$ docker ps -a --filter name=ubuntu-test
+CONTAINER ID   IMAGE     COMMAND                  CREATED                  STATUS                              PORTS     NAMES
+3a14a82f0914   ubuntu    "bash -c 'ls /; echo…"   Less than a second ago   Exited (0) Less than a second ago             ubuntu-test
+
+$ docker run -d --name ubuntu-keep ubuntu sleep infinity
+0de2bcab4564adad544c7c163e025669e3dfd723ff8686dcd4164e3c13f8eb32
+
+$ docker ps --filter name=ubuntu-keep
+CONTAINER ID   IMAGE     COMMAND            CREATED                  STATUS                  PORTS     NAMES
+0de2bcab4564   ubuntu    "sleep infinity"   Less than a second ago   Up Less than a second             ubuntu-keep
+
+$ docker exec ubuntu-keep bash -lc 'echo "exec 로 진입함"; ls /home; whoami; uname -m'
+exec 로 진입함
+ubuntu
+root
+aarch64
+
+$ docker ps --filter name=ubuntu-keep
+CONTAINER ID   IMAGE     COMMAND            CREATED                  STATUS                  PORTS     NAMES
+0de2bcab4564   ubuntu    "sleep infinity"   Less than a second ago   Up Less than a second             ubuntu-keep
+
+$ docker logs my-web --tail 5
+2026/07/30 01:52:09 [notice] 1#1: start worker process 38
+2026/07/30 01:52:09 [notice] 1#1: start worker process 39
+2026/07/30 01:54:17 [error] 29#29: *1 open() "/usr/share/nginx/html/favicon.ico" failed (2: No such file or directory), client: 192.168.215.1, server: localhost, request: "GET /favicon.ico HTTP/1.1", host: "localhost:8080", referrer: "http://localhost:8080/"
+192.168.215.1 - - [30/Jul/2026:01:54:17 +0000] "GET /favicon.ico HTTP/1.1" 404 555 "http://localhost:8080/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36" "-"
+192.168.215.1 - - [30/Jul/2026:02:09:59 +0000] "GET / HTTP/1.1" 304 0 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36" "-"
+
+$ docker stop ubuntu-keep
+ubuntu-keep
+
+$ docker ps -a --filter name=ubuntu-keep
+CONTAINER ID   IMAGE     COMMAND            CREATED          STATUS                                PORTS     NAMES
+0de2bcab4564   ubuntu    "sleep infinity"   10 seconds ago   Exited (137) Less than a second ago             ubuntu-keep
+
+$ docker start ubuntu-keep
+ubuntu-keep
+
+$ docker ps --filter name=ubuntu-keep
+CONTAINER ID   IMAGE     COMMAND            CREATED          STATUS                  PORTS     NAMES
+0de2bcab4564   ubuntu    "sleep infinity"   10 seconds ago   Up Less than a second             ubuntu-keep
+
+$ docker rm -f ubuntu-test ubuntu-keep
+ubuntu-test
+ubuntu-keep
+

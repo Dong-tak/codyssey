@@ -1,0 +1,49 @@
+$ printf '#!/bin/bash\necho "permission test ok"\n' > run.sh
+
+$ ls -l run.sh
+-rw-r--r--@ 1 tak-e  staff  38 Jul 30 15:42 run.sh
+
+$ ./run.sh
+(eval):1: permission denied: ./run.sh
+
+$ chmod 755 run.sh
+
+$ ls -l run.sh
+-rwxr-xr-x@ 1 tak-e  staff  38 Jul 30 15:42 run.sh
+
+$ ./run.sh
+permission test ok
+
+$ chmod 644 run.sh
+
+$ ls -l run.sh
+-rw-r--r--@ 1 tak-e  staff  38 Jul 30 15:42 run.sh
+
+$ mkdir -p locked && echo 'inside' > locked/inside.txt
+
+$ ls -ld locked
+drwxr-xr-x@ 3 tak-e  staff  96 Jul 30 15:42 locked
+
+$ chmod 500 locked
+
+$ ls -ld locked
+dr-x------@ 3 tak-e  staff  96 Jul 30 15:42 locked
+
+$ cat locked/inside.txt
+inside
+
+$ touch locked/should-fail.txt
+touch: locked/should-fail.txt: Permission denied
+
+$ chmod 755 locked
+
+$ ls -ld locked
+drwxr-xr-x@ 3 tak-e  staff  96 Jul 30 15:42 locked
+
+$ touch locked/now-ok.txt
+
+$ ls -l locked
+total 8
+-rw-r--r--@ 1 tak-e  staff  7 Jul 30 15:42 inside.txt
+-rw-r--r--@ 1 tak-e  staff  0 Jul 30 15:42 now-ok.txt
+

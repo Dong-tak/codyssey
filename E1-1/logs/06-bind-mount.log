@@ -1,0 +1,51 @@
+$ cat index.html
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>My Docker Page</title>
+</head>
+<body>
+  <h1>🐳 내가 만든 Docker 이미지!</h1>
+  <p>nginx + 커스텀 HTML 성공!</p>
+</body>
+</html>
+
+$ docker run -d -p 8084:80 --name web-bind -v "$PWD":/usr/share/nginx/html:ro nginx:latest
+34187c0107d80a7cdce92a61c32acaae249e44b770d292d94aa8a218dc448a32
+
+$ docker ps --filter name=web-bind
+CONTAINER ID   IMAGE          COMMAND                  CREATED                  STATUS                  PORTS                                     NAMES
+34187c0107d8   nginx:latest   "/docker-entrypoint.…"   Less than a second ago   Up Less than a second   0.0.0.0:8084->80/tcp, [::]:8084->80/tcp   web-bind
+
+$ curl -s http://localhost:8084 | grep -E 'h1|p>'
+  <h1>🐳 내가 만든 Docker 이미지!</h1>
+  <p>nginx + 커스텀 HTML 성공!</p>
+
+$ echo '  <p>바인드 마운트로 재빌드 없이 반영된 문장입니다. (2026-07-30)</p>' >> index.html
+
+$ curl -s http://localhost:8084 | grep -E 'h1|p>'
+  <h1>🐳 내가 만든 Docker 이미지!</h1>
+  <p>nginx + 커스텀 HTML 성공!</p>
+  <p>바인드 마운트로 재빌드 없이 반영된 문장입니다. (2026-07-30)</p>
+
+$ docker exec web-bind cat /usr/share/nginx/html/index.html
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>My Docker Page</title>
+</head>
+<body>
+  <h1>🐳 내가 만든 Docker 이미지!</h1>
+  <p>nginx + 커스텀 HTML 성공!</p>
+</body>
+</html>
+  <p>바인드 마운트로 재빌드 없이 반영된 문장입니다. (2026-07-30)</p>
+
+$ docker inspect --format '{{range .Mounts}}{{.Type}} {{.Source}} -> {{.Destination}} (RW={{.RW}}){{end}}' web-bind
+bind /Users/tak-e/dev-workstation/my-web -> /usr/share/nginx/html (RW=false)
+
+$ docker exec web-bind sh -c 'echo test > /usr/share/nginx/html/from-container.txt'
+sh: 1: cannot create /usr/share/nginx/html/from-container.txt: Read-only file system
+

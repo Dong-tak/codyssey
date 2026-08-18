@@ -1,0 +1,47 @@
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Secrets and local environment
+.env
+.env.*
+**/.env
+**/.env.*
+!.env.example
+**/!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+
+# Language and dependency caches
+**/__pycache__/
+**/*.py[cod]
+**/.pytest_cache/
+**/.mypy_cache/
+**/.ruff_cache/
+**/.cache/
+**/.venv/
+**/venv/
+**/node_modules/
+**/dist/
+**/build/
+
+# Local AI/tool state
+.bkit/
+.omc/
+.codex/
+**/.bkit/
+**/.omc/
+**/.claude/
+
+# Separate project outside the Codyssey assignments
+AIndexel/
+
+# Assignment-local runtime artifacts
+/E1-1/practice/
+/E1-1/test.log
+/E1-2/quiz-game-practice/state.json
+/E1-2/quiz-game-practice/INTERVIEW_NOTES.md

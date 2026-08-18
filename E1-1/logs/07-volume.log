@@ -1,0 +1,53 @@
+$ docker volume create mydata
+mydata
+
+$ docker volume ls
+DRIVER    VOLUME NAME
+local     mydata
+
+$ docker run -d --name vol-test -v mydata:/data ubuntu sleep infinity
+4b60511ca2e6fb17072b8fe0ea93e08f382028e35193b68d7c7643c5b0c988d4
+
+$ docker exec vol-test bash -lc 'echo "persist me - 2026-07-30" > /data/hello.txt && cat /data/hello.txt'
+persist me - 2026-07-30
+
+$ docker exec vol-test bash -lc 'ls -l /data'
+total 4
+-rw-r--r-- 1 root root 24 Jul 30 06:53 hello.txt
+
+$ docker rm -f vol-test
+vol-test
+
+$ docker ps -a --filter name=vol-test
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+
+$ docker volume ls
+DRIVER    VOLUME NAME
+local     mydata
+
+$ docker run -d --name vol-test2 -v mydata:/data ubuntu sleep infinity
+67ddcf6bb76bb188064ef3307d3d77f2ef47ce7b20137d4baa61e0ef73175df1
+
+$ docker exec vol-test2 bash -lc 'cat /data/hello.txt'
+persist me - 2026-07-30
+
+$ docker volume inspect mydata
+[
+    {
+        "CreatedAt": "2026-07-30T15:53:52+09:00",
+        "Driver": "local",
+        "Labels": null,
+        "Mountpoint": "/var/lib/docker/volumes/mydata/_data",
+        "Name": "mydata",
+        "Options": null,
+        "Scope": "local"
+    }
+]
+
+$ docker run --rm ubuntu bash -lc 'ls -l /data 2>&1 || echo "볼륨을 붙이지 않으면 /data 자체가 없다"'
+ls: cannot access '/data': No such file or directory
+볼륨을 붙이지 않으면 /data 자체가 없다
+
+$ docker rm -f vol-test2
+vol-test2
+

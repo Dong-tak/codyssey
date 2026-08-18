@@ -1,0 +1,72 @@
+$ docker --version
+Docker version 28.4.0, build d8eb465f86
+
+$ docker compose version
+Docker Compose version v5.1.2
+
+$ docker context ls
+NAME            DESCRIPTION                               DOCKER ENDPOINT                                 ERROR
+default         Current DOCKER_HOST based configuration   unix:///var/run/docker.sock                     
+desktop-linux   Docker Desktop                            unix:///Users/tak-e/.docker/run/docker.sock     
+orbstack *      OrbStack                                  unix:///Users/tak-e/.orbstack/run/docker.sock   
+
+$ docker version --format 'Client: {{.Client.Version}} / Server: {{.Server.Version}} ({{.Server.Os}}/{{.Server.Arch}})'
+Client: 28.4.0 / Server: 29.4.0 (linux/arm64)
+
+$ docker info --format 'ServerVersion: {{.ServerVersion}}'
+ServerVersion: 29.4.0
+
+$ docker info | sed -n '1,28p'
+WARNING: DOCKER_INSECURE_NO_IPTABLES_RAW is set
+Client: Docker Engine - Community
+ Version:    28.4.0
+ Context:    orbstack
+ Debug Mode: false
+ Plugins:
+  buildx: Docker Buildx (Docker Inc.)
+    Version:  v0.33.0
+    Path:     /Users/tak-e/.docker/cli-plugins/docker-buildx
+  compose: Docker Compose (Docker Inc.)
+    Version:  v5.1.2
+    Path:     /Users/tak-e/.docker/cli-plugins/docker-compose
+  debug: Get a shell into any image or container (Docker Inc.)
+    Version:  0.0.37
+    Path:     /Users/tak-e/.docker/cli-plugins/docker-debug
+  desktop: Docker Desktop commands (Alpha) (Docker Inc.)
+    Version:  v0.0.15
+    Path:     /Users/tak-e/.docker/cli-plugins/docker-desktop
+  dev: Docker Dev Environments (Docker Inc.)
+    Version:  v0.1.2
+    Path:     /Users/tak-e/.docker/cli-plugins/docker-dev
+  extension: Manages Docker extensions (Docker Inc.)
+    Version:  v0.2.27
+    Path:     /Users/tak-e/.docker/cli-plugins/docker-extension
+  feedback: Provide feedback, right in your terminal! (Docker Inc.)
+    Version:  v1.0.5
+    Path:     /Users/tak-e/.docker/cli-plugins/docker-feedback
+  init: Creates Docker-related starter files for your project (Docker Inc.)
+    Version:  v1.3.0
+
+$ docker images
+REPOSITORY    TAG       IMAGE ID       CREATED        SIZE
+my-web        latest    f75941c28fcd   4 hours ago    255MB
+my-web-web    latest    70431f6363c5   4 hours ago    255MB
+my-nginx      latest    fc91ca4382dc   2 weeks ago    255MB
+nginx         latest    5a88c9c45479   2 weeks ago    258MB
+hello-world   latest    c3cbe1cc1aa5   4 months ago   18.5kB
+
+$ docker ps
+CONTAINER ID   IMAGE        COMMAND                  CREATED       STATUS       PORTS                                     NAMES
+b41ff602fe4d   my-web-web   "/docker-entrypoint.…"   4 hours ago   Up 4 hours   0.0.0.0:8081->80/tcp, [::]:8081->80/tcp   web-compose
+aab36511110c   my-nginx     "/docker-entrypoint.…"   5 hours ago   Up 5 hours   0.0.0.0:8080->80/tcp, [::]:8080->80/tcp   my-web
+
+$ docker ps -a
+CONTAINER ID   IMAGE        COMMAND                  CREATED       STATUS       PORTS                                     NAMES
+b41ff602fe4d   my-web-web   "/docker-entrypoint.…"   4 hours ago   Up 4 hours   0.0.0.0:8081->80/tcp, [::]:8081->80/tcp   web-compose
+aab36511110c   my-nginx     "/docker-entrypoint.…"   5 hours ago   Up 5 hours   0.0.0.0:8080->80/tcp, [::]:8080->80/tcp   my-web
+
+$ docker stats --no-stream
+CONTAINER ID   NAME          CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O         PIDS
+b41ff602fe4d   web-compose   0.00%     9.875MiB / 15.67GiB   0.06%     5.16kB / 1.33kB   7.73MB / 8.19kB   12
+aab36511110c   my-web        0.00%     9.082MiB / 15.67GiB   0.06%     4.71kB / 2.03kB   23.5MB / 8.19kB   12
+

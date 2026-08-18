@@ -1,0 +1,53 @@
+### 사례 1) 스크립트에서 docker run -it 실패
+
+$ docker run -it --rm ubuntu bash -c 'echo hi'
+the input device is not a TTY
+
+$ docker run -i --rm ubuntu bash -c 'echo hi'
+hi
+
+### 사례 2) 포트 충돌 / 컨테이너 이름 중복
+
+$ docker ps --format '{{.Names}} {{.Ports}}' --filter name=my-web-8082
+my-web-8082 0.0.0.0:8082->80/tcp, [::]:8082->80/tcp
+
+$ docker run -d -p 8082:80 --name my-web-dup my-web:1.0
+f5904f02cdd0139f75c6f83be9549c0826553a94054d6f5610113842bd545336
+docker: Error response from daemon: failed to set up container networking: driver failed programming external connectivity on endpoint my-web-dup (ca6d9a2efb99efe50c7a54dda1f3d97dace1605a2419a5a4edcbea9eef9408de): Bind for :::8082 failed: port is already allocated
+
+Run 'docker run --help' for more information
+
+$ docker run -d -p 8086:80 --name my-web-8082 my-web:1.0
+docker: Error response from daemon: Conflict. The container name "/my-web-8082" is already in use by container "c0f67acd51134aa3d7c3466e9641ff7072dd5d081fb8020cfee436b0130eb3f3". You have to remove (or rename) that container to be able to reuse that name.
+
+Run 'docker run --help' for more information
+
+$ docker rm -f my-web-dup
+my-web-dup
+
+$ docker run -d -p 8086:80 --name my-web-8086 my-web:1.0
+4a5819818de912538adbbc93f8fa96f889b2346ec57afebd6d6bc66735add0b7
+
+$ docker ps --format 'table {{.Names}}\t{{.Ports}}' --filter name=my-web-80
+NAMES         PORTS
+my-web-8086   0.0.0.0:8086->80/tcp, [::]:8086->80/tcp
+my-web-8083   0.0.0.0:8083->80/tcp, [::]:8083->80/tcp
+my-web-8082   0.0.0.0:8082->80/tcp, [::]:8082->80/tcp
+
+$ docker rm -f my-web-8086
+my-web-8086
+
+### 사례 3) Client / Server 버전 불일치와 docker context
+
+$ docker version --format 'Client={{.Client.Version}} Server={{.Server.Version}} ({{.Server.Os}}/{{.Server.Arch}})'
+Client=28.4.0 Server=29.4.0 (linux/arm64)
+
+$ docker context ls
+NAME            DESCRIPTION                               DOCKER ENDPOINT                                 ERROR
+default         Current DOCKER_HOST based configuration   unix:///var/run/docker.sock                     
+desktop-linux   Docker Desktop                            unix:///Users/tak-e/.docker/run/docker.sock     
+orbstack *      OrbStack                                  unix:///Users/tak-e/.orbstack/run/docker.sock   
+
+$ docker context inspect orbstack --format '{{.Name}} -> {{.Endpoints.docker.Host}}'
+orbstack -> unix:///Users/tak-e/.orbstack/run/docker.sock
+

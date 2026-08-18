@@ -1,0 +1,25 @@
+services:
+  # 메인 웹 서버: 로컬 Dockerfile 로 빌드
+  web:
+    build: .
+    image: my-web:1.0
+    container_name: web-compose
+    ports:
+      # "호스트포트:컨테이너포트" — 환경변수로 호스트 포트를 바꿀 수 있게 분리
+      - "${WEB_PORT:-8081}:80"
+    environment:
+      # 설정과 코드의 분리: 이미지를 다시 빌드하지 않고 동작 모드를 바꿀 수 있다
+      APP_ENV: ${APP_ENV:-dev}
+    depends_on:
+      - api
+
+  # 보조 서비스: 같은 Compose 네트워크에 붙는 두 번째 컨테이너
+  api:
+    image: nginx:1.27-alpine
+    container_name: api-compose
+    # 호스트에 포트를 열지 않는다 → 오직 컨테이너 네트워크 내부에서만 접근 가능
+    expose:
+      - "80"
+    command: >
+      sh -c "echo '{\"service\":\"api\",\"status\":\"ok\"}' > /usr/share/nginx/html/index.html
+      && nginx -g 'daemon off;'"

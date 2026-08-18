@@ -1,0 +1,55 @@
+$ pwd
+/Users/tak-e/dev-workstation
+
+$ mkdir -p ~/dev-workstation/practice/sub
+
+$ cd ~/dev-workstation/practice && pwd
+/Users/tak-e/dev-workstation/practice
+
+$ touch empty.txt
+
+$ echo 'hello workstation' > note.txt
+
+$ cat note.txt
+hello workstation
+
+$ ls -la
+total 8
+drwxr-xr-x@  5 tak-e  staff  160 Jul 30 15:42 .
+drwxr-xr-x@ 15 tak-e  staff  480 Jul 30 15:42 ..
+-rw-r--r--@  1 tak-e  staff    0 Jul 30 15:42 empty.txt
+-rw-r--r--@  1 tak-e  staff   18 Jul 30 15:42 note.txt
+drwxr-xr-x@  2 tak-e  staff   64 Jul 30 15:42 sub
+
+$ cp note.txt sub/note-copy.txt
+
+$ ls -l sub
+total 8
+-rw-r--r--@ 1 tak-e  staff  18 Jul 30 15:42 note-copy.txt
+
+$ mv note.txt renamed.txt
+
+$ ls -l
+total 8
+-rw-r--r--@ 1 tak-e  staff   0 Jul 30 15:42 empty.txt
+-rw-r--r--@ 1 tak-e  staff  18 Jul 30 15:42 renamed.txt
+drwxr-xr-x@ 3 tak-e  staff  96 Jul 30 15:42 sub
+
+$ rm empty.txt
+
+$ ls -la
+total 8
+drwxr-xr-x@  4 tak-e  staff  128 Jul 30 15:42 .
+drwxr-xr-x@ 15 tak-e  staff  480 Jul 30 15:42 ..
+-rw-r--r--@  1 tak-e  staff   18 Jul 30 15:42 renamed.txt
+drwxr-xr-x@  3 tak-e  staff   96 Jul 30 15:42 sub
+
+$ ls ./sub
+note-copy.txt
+
+$ ls /Users/tak-e/dev-workstation/practice/sub
+note-copy.txt
+
+$ cd .. && pwd
+/Users/tak-e/dev-workstation
+

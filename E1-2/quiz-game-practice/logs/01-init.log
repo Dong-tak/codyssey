@@ -1,0 +1,135 @@
+
+The default interactive shell is now zsh.
+To update your account to use zsh, please run `chsh -s /bin/zsh`.
+For more details, please visit https://support.apple.com/kb/HT208050.
+[?1034hbash-3.2$ cd ~/develop/codyssey/quiz-game-practice
+bash-3.2$ gh repo create quiz-game-practice --public --clone
+]11;?\[6n]11;?\[6n[0;32m✓[0m Created repository Dong-tak/quiz-game-practice on github.com
+  https://github.com/Dong-tak/quiz-game-practice
+bash-3.2$ ls -la
+total 0
+drwxr-xr-x@ 4 tak-e  staff  128  5 Aug 18:22 .
+drwxr-xr-x@ 5 tak-e  staff  160  3 Aug 14:33 ..
+drwxr-xr-x@ 3 tak-e  staff   96  5 Aug 18:21 logs
+drwxr-xr-x@ 3 tak-e  staff   96  5 Aug 18:22 quiz-game-practice
+bash-3.2$ ls -la quiz-game-practice
+total 0
+drwxr-xr-x@ 3 tak-e  staff   96  5 Aug 18:22 .
+drwxr-xr-x@ 4 tak-e  staff  128  5 Aug 18:22 ..
+drwxr-xr-x@ 9 tak-e  staff  288  5 Aug 18:22 .git
+bash-3.2$ mv quiz-game-practice/.git .
+bash-3.2$ rmdir quiz-game-practice && git status
+On branch main
+
+No commits yet
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	[31mlogs/[m
+
+nothing added to commit but untracked files present (use "git add" to track)
+bash-3.2$ cat > .gitignore << 'EOF'
+> state.json
+> __pycache__/
+> *.pyc
+> .DS_Store
+> EOF[K[K[Kclera
+> clear
+> f[KEOF
+bash-3.2$ cat .gitignore
+state.json
+__pycache__/
+*.pyc
+.DS_Store
+clera
+clear
+bash-3.2$ cat > .gitignore << 'EOF'
+> state.json
+> __pycache__/
+> *.pyc
+> .DS_Store
+> EOF
+bash-3.2$ cat .gitignore
+state.json
+__pycache__/
+*.pyc
+.DS_Store
+bash-3.2$ echo "# 퀴즈 게임 (연습)" > README.md
+bash-3.2$ git status
+On branch main
+
+No commits yet
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	[31m.gitignore[m
+	[31mREADME.md[m
+	[31mlogs/[m
+
+nothing added to commit but untracked files present (use "git add" to track)
+bash-3.2$ git add .gitignore README.md && git commit -m "Init: 프로젝트 초기 설 [K정정"
+[main (root-commit) 0b02c78] Init: 프로젝트 초기 설정
+ 2 files changed, 5 insertions(+)
+ create mode 100644 .gitignore
+ create mode 100644 README.md
+bash-3.2$ git push -u origin main
+Enumerating objects: 4, done.
+Counting objects:  25% (1/4)Counting objects:  50% (2/4)Counting objects:  75% (3/4)Counting objects: 100% (4/4)Counting objects: 100% (4/4), done.
+Delta compression using up to 11 threads
+Compressing objects:  50% (1/2)Compressing objects: 100% (2/2)Compressing objects: 100% (2/2), done.
+Writing objects:  25% (1/4)Writing objects:  50% (2/4)Writing objects:  75% (3/4)Writing objects: 100% (4/4)Writing objects: 100% (4/4), 378 bytes | 378.00 KiB/s, done.
+Total 4 (delta 0), reused 0 (delta 0), pack-reused 0 (from 0)
+To https://github.com/Dong-tak/quiz-game-practice.git
+ * [new branch]      main -> main
+branch 'main' set up to track 'origin/main'.
+bash-3.2$ set +H
+bash-3.2$ cat > utils.py << 'EOF'
+> """공통 입력 처리 유틸리티."""
+> 
+> 
+> def input_int(prompt, min_value, max_value):
+>     """min_value ~ max_value 범위의 정수를 입력받아 반환한다."""
+>     while True:
+>         raw = input(prompt).strip()
+> 
+>         if raw == "":
+>             print(f"경고: 입력이 비어 있습니다. {min_value}-{max_value} 사이의  숫자를 입력하세요.")
+>             continue
+> 
+>         try:
+>             value = int(raw)
+>         except ValueError:
+>             print(f"경고: 잘못된 입력입니다. {min_value}-{max_value} 사이의 숫 자를 입력하세요.")
+>             continue
+> 
+>         if value < min_value or value > max_value:
+>             print(f"경고: {min_value}-{max_value} 범위를 벗어났습니다. 다시 입 력하세요.")
+>             continue
+> 
+>         return value
+> EOF
+bash-3.2$ cat utils.py
+"""공통 입력 처리 유틸리티."""
+
+
+def input_int(prompt, min_value, max_value):
+    """min_value ~ max_value 범위의 정수를 입력받아 반환한다."""
+    while True:
+        raw = input(prompt).strip()
+
+        if raw == "":
+            print(f"경고: 입력이 비어 있습니다. {min_value}-{max_value} 사이의 숫자를 입력하세요.")
+            continue
+
+        try:
+            value = int(raw)
+        except ValueError:
+            print(f"경고: 잘못된 입력입니다. {min_value}-{max_value} 사이의 숫자를 입력하세요.")
+            continue
+
+        if value < min_value or value > max_value:
+            print(f"경고: {min_value}-{max_value} 범위를 벗어났습니다. 다시 입력하세요.")
+            continue
+
+        return value
+bash-3.2$ 
