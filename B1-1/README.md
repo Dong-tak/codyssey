@@ -66,7 +66,7 @@ VS Code를 쓴다면 **Live Server** 확장을 설치하고 `index.html`에서 �
 | **About** | 프로필 이미지, 자기소개 |
 | **Skills** | 보유 기술 12종을 활용도(⭐ 최대 3개)와 함께 3개 카테고리로 정리 |
 | **Work** | 주요 프로젝트 4건. 카드를 클릭하면 Notion 상세 문서로 이동 |
-| **Projects** | GitHub API로 실시간 조회한 저장소 카드 (언어별 필터 포함) |
+| **Projects** | GitHub API로 실시간 조회한 저장소 카드. 클릭하면 해당 저장소로 이동 (언어별 필터 포함) |
 | **Contact** | 문의 폼 (유효성 검사 + 메일 전송) |
 | **Footer** | 저작권, GitHub · Product Hunt · Email 링크 |
 

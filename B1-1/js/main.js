@@ -146,16 +146,18 @@ const showState = (html) => {
 
 const renderCards = (repos) => {
   // map: 데이터 배열 → HTML 카드 문자열
+  // 카드 전체를 <a> 로 만들어, 어디를 눌러도 해당 GitHub 저장소로 이동하게 한다
   projectsEl.innerHTML = repos
     .map(({ name, description, html_url, language, stargazers_count }) => `
-      <article class="project-card">
-        <h3><a href="${html_url}" target="_blank" rel="noopener">${name}</a></h3>
+      <a class="project-card" href="${html_url}" target="_blank" rel="noopener">
+        <h3>${name}</h3>
         <p class="project-card__desc">${description ?? "설명이 없는 저장소입니다."}</p>
         <div class="project-card__meta">
           ${language ? `<span class="project-card__lang">${language}</span>` : ""}
           <span>⭐ ${stargazers_count}</span>
         </div>
-      </article>
+        <span class="project-card__more">GitHub에서 보기 ↗</span>
+      </a>
     `)
     .join("");
 

@@ -14,6 +14,7 @@ const PROJECTS = [
       "AI와 시각적 보드를 활용해 생각을 구조화하고, 더 빠르고 정확한 전략 수립과 소통을 돕는 논리 에디터입니다. 외부 렌더링 라이브러리 없이 Canvas 2D API로 보드의 화살표·노드·마인드맵을 직접 구현했습니다.",
     tags: ["React", "TypeScript", "Redux", "Canvas 2D API", "WebSocket"],
     url: "https://rigorous-dinghy-ea8.notion.site/SuitdiO-AI-b553acd8e6c083f5908c0150d9cd8c26",
+    github: "https://github.com/Dong-tak/suitdio-front",
   },
   {
     emoji: "🔖",
@@ -25,6 +26,7 @@ const PROJECTS = [
       "마케터의 반복적인 리서치·레퍼런스 수집 업무를 간편한 스크랩과 자동 아카이빙으로 덜어주는 유틸리티 서비스입니다. 화면 요구사항정의서 작성과 프론트엔드 구현을 담당했습니다.",
     tags: ["React", "TypeScript", "반응형 3단계", "크롬 익스텐션 연동"],
     url: "https://rigorous-dinghy-ea8.notion.site/3933acd8e6c081019ba5d980200f0dee",
+    github: "https://github.com/Dong-tak/milque-front",
   },
   {
     emoji: "⚽",
