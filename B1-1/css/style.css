@@ -240,6 +240,146 @@ a { color: inherit; text-decoration: none; }
 .skill-card h3 { color: var(--primary); margin-bottom: 0.75rem; font-size: 1.05rem; }
 .skill-card li { color: var(--text-muted); font-size: 0.95rem; }
 
+/* ===== Skills 목록 (별점) ===== */
+.skill-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.35rem 0;
+  color: var(--text);
+  font-size: 0.95rem;
+}
+.skill-list li + li { border-top: 1px solid var(--border); }
+.stars { font-size: 0.8rem; letter-spacing: -1px; white-space: nowrap; }
+
+/* ===== Work: 주요 프로젝트 카드 ===== */
+.work {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+.work-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.75rem;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+}
+.work-card:hover,
+.work-card:focus-visible {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-hover);
+  border-color: var(--primary);
+  outline: none;
+}
+.work-card__emoji { font-size: 1.8rem; }
+.work-card h3 { font-size: 1.1rem; line-height: 1.4; }
+.work-card__meta { font-size: 0.85rem; color: var(--primary); font-weight: 600; }
+.work-card__summary { color: var(--text-muted); font-size: 0.92rem; flex-grow: 1; }
+.work-card__tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.work-card__tags li {
+  font-size: 0.75rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  background: var(--bg-alt);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+.work-card__more { font-size: 0.85rem; color: var(--primary); font-weight: 600; margin-top: 0.25rem; }
+
+/* ===== 프로젝트 상세 모달 ===== */
+body.modal-open { overflow: hidden; }
+
+.modal { position: fixed; inset: 0; z-index: 200; display: grid; place-items: center; padding: 1rem; }
+.modal[hidden] { display: none; }
+
+.modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(2px);
+}
+
+.modal__panel {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-hover);
+  width: min(100%, 760px);
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal__close {
+  position: absolute;
+  top: 0.5rem; right: 0.75rem;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  line-height: 1;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: 8px;
+  transition: color var(--transition), background var(--transition);
+  z-index: 1;
+}
+.modal__close:hover { color: var(--text); background: var(--bg-alt); }
+
+.modal__body { overflow-y: auto; padding: 2rem 1.75rem; }
+.modal__emoji { font-size: 2.2rem; }
+.modal__body h2 { font-size: 1.4rem; margin: 0.25rem 0 0.75rem; line-height: 1.4; }
+.modal__summary { color: var(--text-muted); margin-bottom: 1.5rem; }
+
+.modal__info {
+  display: grid;
+  gap: 0.5rem;
+  padding: 1rem 1.25rem;
+  background: var(--bg-alt);
+  border-radius: var(--radius);
+  margin-bottom: 1.5rem;
+  font-size: 0.92rem;
+}
+.modal__info > div { display: flex; gap: 0.75rem; }
+.modal__info dt { color: var(--primary); font-weight: 600; min-width: 3rem; }
+.modal__info dd { color: var(--text-muted); }
+
+.modal__metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+.modal__metrics li {
+  text-align: center;
+  padding: 1rem 0.5rem;
+  background: var(--bg-alt);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+.modal__metrics strong { display: block; font-size: 1.3rem; color: var(--primary); }
+.modal__metrics span { font-size: 0.8rem; color: var(--text-muted); }
+
+.modal__section { margin-bottom: 1.75rem; }
+.modal__section h3 {
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+  padding-left: 0.6rem;
+  border-left: 3px solid var(--primary);
+}
+.modal__section p { color: var(--text-muted); font-size: 0.93rem; margin-bottom: 0.7rem; }
+
+.modal__links { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+.modal__links .btn { font-size: 0.9rem; padding: 0.6rem 1.1rem; }
+
 /* ===== Projects (Grid) ===== */
 .filters { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; margin-bottom: 2rem; }
 .filter-btn {
