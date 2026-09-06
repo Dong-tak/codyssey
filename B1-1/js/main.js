@@ -6,6 +6,11 @@
 const GITHUB_USER = "Dong-tak";
 const CONTACT_EMAIL = "lonu6325@naver.com";
 
+// Projects 섹션에 보여주지 않을 저장소
+// - Dong-tak: GitHub 프로필 소개용 저장소라 작업물이 아님
+// - portfolio: 이 사이트를 옮기기 전에 쓰던 저장소
+const EXCLUDED_REPOS = ["Dong-tak", "portfolio"];
+
 // Formspree 엔드포인트를 넣으면 메일 앱을 열지 않고 서버로 직접 전송한다.
 // (formspree.io 에서 폼을 만들면 "https://formspree.io/f/xxxxxxxx" 형태의 주소를 준다)
 const FORMSPREE_ENDPOINT = "";
@@ -187,7 +192,11 @@ const loadProjects = async () => {
     }
 
     const repos = await response.json();
-    allRepos = repos.filter((repo) => !repo.fork); // 포크한 저장소는 제외
+
+    // 포크한 저장소와 목록에서 감출 저장소를 걸러낸다
+    allRepos = repos.filter(
+      (repo) => !repo.fork && !EXCLUDED_REPOS.includes(repo.name)
+    );
 
     // [상태: 빈 데이터]
     if (allRepos.length === 0) {

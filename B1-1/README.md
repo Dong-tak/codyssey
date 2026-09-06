@@ -190,8 +190,23 @@ id는 문서 전체에서 유일해야 한다는 규칙을 어기면 이렇게 �
 
 ## 8. 실행 화면
 
-> 아래에 스크린샷을 첨부합니다. (데스크톱 / 모바일 / 다크 모드)
+### 데스크톱 — 다크 모드
 
-| 데스크톱 | 모바일 | 다크 모드 |
-|---|---|---|
-| _(첨부 예정)_ | _(첨부 예정)_ | _(첨부 예정)_ |
+주소창의 `dong-tak.github.io/codyssey/B1-1/` 과 함께 배포된 화면입니다.
+
+![데스크톱 다크 모드 Hero 화면](docs/screenshots/01-desktop-dark-hero.png)
+
+### 모바일 — 다크 모드
+
+768px 미만에서는 네비게이션 메뉴가 숨겨지고 햄버거 버튼이 나타납니다.
+
+![모바일 다크 모드 Hero 화면](docs/screenshots/02-mobile-dark-hero.png)
+
+### 다크 모드 ↔ 라이트 모드 비교
+
+같은 About 섹션을 두 테마에서 캡처한 화면입니다.
+CSS 변수(`--bg`, `--text`, `--surface` 등)만 교체되어 전체 색상이 한 번에 바뀝니다.
+
+| 다크 모드 | 라이트 모드 |
+|---|---|
+| ![About 섹션 다크 모드](docs/screenshots/03-desktop-dark-about.png) | ![About 섹션 라이트 모드](docs/screenshots/04-desktop-light-about.png) |
