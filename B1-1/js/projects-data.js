@@ -41,13 +41,13 @@ const PROJECTS = [
   },
   {
     emoji: "🍼",
-    title: "잠시맘 — 아이돌봄 서비스",
-    org: "멋쟁이사자처럼 스타트업 스쿨 · Oblet",
-    period: "2022",
-    role: "Co-Founder · Product Manager",
+    title: "잠시맘 — 단시간 아이 돌봄 매칭 서비스",
+    org: "Oblet · 멋쟁이사자처럼 스타트업 스쿨",
+    period: "2022.08 – 2022.10",
+    role: "기획 · Product Manager",
     summary:
-      "멋쟁이사자처럼 스타트업 스쿨에서 진행한 아이돌봄 서비스 프로젝트입니다. 2022년 10월 스타트업 스쿨 Best MVP 로 선정되었습니다.",
-    tags: ["제품 기획", "MVP"],
-    url: "https://rigorous-dinghy-ea8.notion.site/Dorte-s-c123acd8e6c083d480b2818bdf11f80e",
+      "3시간 이하 단시간 돌봄이 필요한 부모와, 8단계 인증을 통과한 시터를 연결하는 매칭 서비스입니다. 문제 정의·시장 조사·사용자 인터뷰를 담당했고, 스타트업 스쿨 Best MVP 를 수상했습니다.",
+    tags: ["제품 기획", "사용자 인터뷰", "시장 조사", "MVP 검증"],
+    url: "https://rigorous-dinghy-ea8.notion.site/3923acd8e6c0812fadece02335810f4a",
   },
 ];
