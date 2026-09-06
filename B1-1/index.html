@@ -81,37 +81,6 @@
           </div>
         </div>
 
-        <h3 class="about__subtitle">Experience</h3>
-        <ol class="timeline">
-          <li class="timeline__item">
-            <span class="timeline__date">2024.06 – 2024.12</span>
-            <div>
-              <h4>SuitdiO — Co-Founder &middot; 프론트엔드</h4>
-              <p>AI 기반 보드/마인드맵 워크스페이스. 보드 엔진(화살표·노드·섹션·마인드맵) 구현 및 랜딩페이지 담당.</p>
-            </div>
-          </li>
-          <li class="timeline__item">
-            <span class="timeline__date">2024.01 – 2024.06</span>
-            <div>
-              <h4>팬로즈 — Co-Founder &middot; 프론트엔드</h4>
-              <p>마케터를 위한 스크랩 서비스 &lsquo;마일퀘&rsquo; 기획 및 프론트엔드 구현. 익산시 청년창업 지원사업 선정.</p>
-            </div>
-          </li>
-          <li class="timeline__item">
-            <span class="timeline__date">2023.10 – 2024.05</span>
-            <div>
-              <h4>축구관 — Co-Founder &middot; Operator</h4>
-              <p>해외축구 단체관람 서비스. 유료 행사 9회 운영, 누적 모집 450석, 팬 커뮤니티 21,000여 명 접점 확보.</p>
-            </div>
-          </li>
-          <li class="timeline__item">
-            <span class="timeline__date">2022.09 – 2023.06</span>
-            <div>
-              <h4>Oblet — Co-Founder &middot; Product Manager</h4>
-              <p>초기 스타트업 팀에서 제품 기획 담당. 멋쟁이사자처럼 스타트업스쿨 Best MVP 수상.</p>
-            </div>
-          </li>
-        </ol>
       </div>
     </section>
 
@@ -160,7 +129,10 @@
     <section class="section" id="work">
       <div class="container">
         <h2 class="section__title">Work</h2>
-        <p class="section__desc">카드를 클릭하면 프로젝트 상세 내용을 볼 수 있습니다.</p>
+        <p class="section__desc">
+          창업팀에서 기획과 개발을 맡았던 프로젝트들입니다.<br>
+          카드를 클릭하면 Notion에 정리한 상세 문서로 이동합니다.
+        </p>
         <div class="work" id="workList"></div>
       </div>
     </section>
@@ -229,15 +201,6 @@
   </footer>
 
   <button type="button" class="to-top" id="toTop" aria-label="맨 위로 이동">↑</button>
-
-  <!-- 프로젝트 상세 모달: 내용은 projects-data.js 를 바탕으로 JS가 채운다 -->
-  <div class="modal" id="modal" hidden>
-    <div class="modal__backdrop" data-close></div>
-    <div class="modal__panel" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-      <button type="button" class="modal__close" id="modalClose" aria-label="닫기" data-close>&times;</button>
-      <div class="modal__body" id="modalBody"></div>
-    </div>
-  </div>
 
 </body>
 </html>

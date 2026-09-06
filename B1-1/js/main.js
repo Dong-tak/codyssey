@@ -102,107 +102,27 @@ const observer = new IntersectionObserver(
 document.querySelectorAll(".section").forEach((el) => observer.observe(el));
 
 /* ---------------------------------------------------------
-   5. Work: 주요 프로젝트 카드 + 상세 모달
-   이벤트: 카드 click → 모달 열기 / 닫기 버튼·배경·ESC → 닫기
-   상태:   열려 있는 프로젝트 id
-   렌더링: projects-data.js 의 데이터로 모달 내용을 채운다
+   5. Work: 주요 프로젝트 카드
+   각 카드는 해당 프로젝트의 Notion 상세 페이지로 연결된다.
+   데이터는 projects-data.js 에 분리해 두고 map() 으로 카드를 만든다.
    --------------------------------------------------------- */
 const workList = document.querySelector("#workList");
-const modal = document.querySelector("#modal");
-const modalBody = document.querySelector("#modalBody");
 
-let lastFocused = null; // 모달을 닫은 뒤 원래 있던 버튼으로 초점을 되돌리기 위해
-
-// 카드 목록 렌더링
-workList.innerHTML = PROJECTS.map(({ id, emoji, title, period, role, summary, tags }) => `
-  <article class="work-card" data-id="${id}" tabindex="0" role="button"
-           aria-label="${title} 상세 보기">
-    <span class="work-card__emoji" aria-hidden="true">${emoji}</span>
+workList.innerHTML = PROJECTS.map(({ emoji, title, org, period, role, summary, tags, url }) => `
+  <a class="work-card" href="${url}" target="_blank" rel="noopener">
+    <div class="work-card__head">
+      <span class="work-card__emoji" aria-hidden="true">${emoji}</span>
+      <span class="work-card__period">${period}</span>
+    </div>
     <h3>${title}</h3>
-    <p class="work-card__meta">${period} &middot; ${role}</p>
+    <p class="work-card__meta">${org} &middot; ${role}</p>
     <p class="work-card__summary">${summary}</p>
     <ul class="work-card__tags">
       ${tags.map((tag) => `<li>${tag}</li>`).join("")}
     </ul>
-    <span class="work-card__more">자세히 보기 →</span>
-  </article>
+    <span class="work-card__more">Notion에서 자세히 보기 ↗</span>
+  </a>
 `).join("");
-
-const openModal = (id) => {
-  const project = PROJECTS.find((item) => item.id === id);
-  if (!project) return;
-
-  const { emoji, title, period, role, team, summary, metrics, links, sections } = project;
-
-  modalBody.innerHTML = `
-    <p class="modal__emoji" aria-hidden="true">${emoji}</p>
-    <h2 id="modalTitle">${title}</h2>
-    <p class="modal__summary">${summary}</p>
-
-    <dl class="modal__info">
-      <div><dt>기간</dt><dd>${period}</dd></div>
-      <div><dt>역할</dt><dd>${role}</dd></div>
-      <div><dt>팀</dt><dd>${team}</dd></div>
-    </dl>
-
-    ${metrics ? `
-      <ul class="modal__metrics">
-        ${metrics.map(({ label, value }) => `
-          <li><strong>${value}</strong><span>${label}</span></li>
-        `).join("")}
-      </ul>` : ""}
-
-    ${sections.map(({ heading, body }) => `
-      <section class="modal__section">
-        <h3>${heading}</h3>
-        ${body.map((paragraph) => `<p>${paragraph}</p>`).join("")}
-      </section>
-    `).join("")}
-
-    ${links.length > 0 ? `
-      <div class="modal__links">
-        ${links.map(({ label, url }) => `
-          <a href="${url}" target="_blank" rel="noopener" class="btn btn--ghost">${label} ↗</a>
-        `).join("")}
-      </div>` : ""}
-  `;
-
-  lastFocused = document.activeElement;
-  modal.hidden = false;
-  document.body.classList.add("modal-open"); // 뒤 배경 스크롤 잠금
-  document.querySelector("#modalClose").focus();
-};
-
-const closeModal = () => {
-  modal.hidden = true;
-  document.body.classList.remove("modal-open");
-  modalBody.scrollTop = 0;
-  if (lastFocused) lastFocused.focus();
-};
-
-// 카드가 여러 개라 부모에 이벤트를 한 번만 건다 (이벤트 위임)
-workList.addEventListener("click", (event) => {
-  const card = event.target.closest(".work-card");
-  if (card) openModal(card.dataset.id);
-});
-
-// 키보드로도 열 수 있게 (Enter / Space)
-workList.addEventListener("keydown", (event) => {
-  if (event.key !== "Enter" && event.key !== " ") return;
-  const card = event.target.closest(".work-card");
-  if (!card) return;
-  event.preventDefault();
-  openModal(card.dataset.id);
-});
-
-// 닫기 버튼과 배경 클릭 모두 data-close 속성으로 처리
-modal.addEventListener("click", (event) => {
-  if (event.target.hasAttribute("data-close")) closeModal();
-});
-
-document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape" && !modal.hidden) closeModal();
-});
 
 /* ---------------------------------------------------------
    6. Projects: GitHub API 연동
