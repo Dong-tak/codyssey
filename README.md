@@ -10,7 +10,8 @@ codyssey/
 ├── E1-2/
 │   ├── quiz-game-practice/     # Python 퀴즈 게임 원본
 │   └── quiz-game-practice-clone/ # Git clone/pull 실습 복제본
-└── E1-3/                       # Mini NPU Simulator
+├── E1-3/                       # Mini NPU Simulator
+└── B1-1/                       # 반응형 포트폴리오 웹사이트 (GitHub Pages 배포)
 ```
 
 ### E1-1 — 개발 워크스테이션 구축
@@ -39,4 +40,17 @@ MAC 연산으로 패턴을 판별하고 연산 복잡도를 확인하는 콘솔 
 ```bash
 cd E1-3
 python3 main.py
+```
+
+### B1-1 — 반응형 포트폴리오 웹사이트
+
+외부 라이브러리 없이 순수 HTML/CSS/JavaScript로 만든 반응형 포트폴리오입니다.
+GitHub API 연동, 다크 모드(localStorage 유지), 폼 유효성 검사, 스크롤 인터랙션을 포함합니다.
+
+- **배포 사이트: https://dong-tak.github.io/codyssey/B1-1/**
+- 상세 문서: [`B1-1/README.md`](B1-1/README.md)
+
+```bash
+cd B1-1
+python3 -m http.server 5500
 ```
