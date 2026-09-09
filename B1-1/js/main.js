@@ -13,7 +13,7 @@ const EXCLUDED_REPOS = ["Dong-tak", "portfolio"];
 
 // Formspree 엔드포인트를 넣으면 메일 앱을 열지 않고 서버로 직접 전송한다.
 // (formspree.io 에서 폼을 만들면 "https://formspree.io/f/xxxxxxxx" 형태의 주소를 준다)
-const FORMSPREE_ENDPOINT = "";
+const FORMSPREE_ENDPOINT = "https://formspree.io/f/mzebybqj";
 const SCROLL_TOP_THRESHOLD = 300; // 스크롤 탑 버튼이 나타나는 지점(px)
 const NAV_SCROLL_THRESHOLD = 60;  // 네비게이션 배경이 바뀌는 지점(px)
 const OBSERVER_THRESHOLD = 0.2;   // 스크롤 애니메이션 임계값
