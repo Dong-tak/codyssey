@@ -340,6 +340,7 @@ a { color: inherit; text-decoration: none; }
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 .state .btn { margin-top: 1rem; }
+.state__detail { font-size: 0.85rem; }
 
 /* ===== Contact 폼 ===== */
 .form { display: grid; gap: 1.25rem; }

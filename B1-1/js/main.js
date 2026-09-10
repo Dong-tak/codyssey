@@ -127,15 +127,30 @@ workList.innerHTML = PROJECTS.map(({ emoji, title, org, period, role, summary, t
 /* ---------------------------------------------------------
    6. Projects: GitHub API 연동
    이벤트: 페이지 로드 / 재시도 버튼 click / 필터 버튼 click
-   상태:   loading → success | error | empty,  그리고 선택된 언어
-   렌더링: 상태에 따라 Projects 섹션 내용을 통째로 교체
+   상태:   state 객체 하나 { status, repos, filter, error }
+   렌더링: setState() 가 항상 render() 를 호출하고,
+           render() 는 state.status 만 보고 화면을 결정한다
    --------------------------------------------------------- */
 const projectsEl = document.querySelector("#projectList");
 const stateEl = document.querySelector("#projectsState");
 const filtersEl = document.querySelector("#filters");
 
-let allRepos = [];          // API 로 받아온 원본 데이터
-let currentFilter = "All";  // 현재 선택된 언어 필터
+// 이 섹션이 기억해야 할 것을 객체 하나에 모았다.
+// 변수 여러 개로 흩어 두면 "지금 화면이 어떤 상태인지"를 한눈에 볼 수 없고,
+// 상태를 바꿔 놓고 화면 갱신을 빠뜨리는 실수가 생긴다.
+const state = {
+  status: "loading", // "loading" | "success" | "empty" | "error"
+  repos: [],         // API 로 받아온 원본 데이터 (필터 적용 전)
+  filter: "All",     // 현재 선택된 언어
+  error: "",         // status 가 "error" 일 때 보여줄 메시지
+};
+
+// 상태를 바꾸는 유일한 통로.
+// 여기서만 화면을 다시 그리므로 "상태가 바뀌면 화면도 반드시 바뀐다"가 보장된다.
+const setState = (patch) => {
+  Object.assign(state, patch);
+  render();
+};
 
 const showState = (html) => {
   stateEl.hidden = false;
@@ -167,43 +182,69 @@ const renderCards = (repos) => {
 
 const renderFilters = () => {
   // 중복 없는 언어 목록 만들기 (language 가 null 인 저장소는 제외)
-  const languages = ["All", ...new Set(allRepos.map((r) => r.language).filter(Boolean))];
+  const languages = ["All", ...new Set(state.repos.map((r) => r.language).filter(Boolean))];
 
   filtersEl.hidden = false;
   filtersEl.innerHTML = languages
     .map((lang) => `
-      <button type="button" class="filter-btn ${lang === currentFilter ? "active" : ""}"
+      <button type="button" class="filter-btn ${lang === state.filter ? "active" : ""}"
               data-lang="${lang}">${lang}</button>
     `)
     .join("");
 };
 
-const applyFilter = () => {
-  // filter: 선택된 언어에 해당하는 저장소만 남긴다
-  const filtered = currentFilter === "All"
-    ? allRepos
-    : allRepos.filter((repo) => repo.language === currentFilter);
+// 상태 하나만 보고 화면 전체를 결정한다.
+// 이 함수 밖에서는 Projects 섹션의 DOM 을 건드리지 않는다.
+const render = () => {
+  if (state.status === "loading") {
+    showState(`<div class="spinner" aria-hidden="true"></div><p>프로젝트를 불러오는 중...</p>`);
+    return;
+  }
 
-  if (filtered.length === 0) {
+  if (state.status === "error") {
+    showState(`
+      <p>프로젝트를 불러올 수 없습니다.</p>
+      <p class="state__detail">${state.error}</p>
+      <button type="button" class="btn btn--ghost" id="retryBtn">다시 시도</button>
+    `);
+    return;
+  }
+
+  if (state.status === "empty") {
+    showState(`<p>표시할 프로젝트가 없습니다.</p>`);
+    return;
+  }
+
+  // status === "success"
+  stateEl.hidden = true;
+  renderFilters();
+
+  // filter: 선택된 언어에 해당하는 저장소만 남긴다
+  const visible = state.filter === "All"
+    ? state.repos
+    : state.repos.filter((repo) => repo.language === state.filter);
+
+  if (visible.length === 0) {
     projectsEl.innerHTML = `<p class="state">해당 언어의 프로젝트가 없습니다.</p>`;
     return;
   }
-  renderCards(filtered);
+  renderCards(visible);
 };
 
-// 필터 버튼은 동적으로 만들어지므로, 부모에 한 번만 이벤트를 건다 (이벤트 위임)
+// 필터 버튼과 재시도 버튼은 매번 새로 그려지므로,
+// 부모에 한 번만 이벤트를 걸어 둔다 (이벤트 위임)
 filtersEl.addEventListener("click", (event) => {
   const button = event.target.closest(".filter-btn");
   if (!button) return;
+  setState({ filter: button.dataset.lang });
+});
 
-  currentFilter = button.dataset.lang;
-  renderFilters();
-  applyFilter();
+stateEl.addEventListener("click", (event) => {
+  if (event.target.id === "retryBtn") loadProjects();
 });
 
 const loadProjects = async () => {
-  // [상태: 로딩]
-  showState(`<div class="spinner" aria-hidden="true"></div><p>프로젝트를 불러오는 중...</p>`);
+  setState({ status: "loading" });
 
   try {
     const response = await fetch(`https://api.github.com/users/${GITHUB_USER}/repos?sort=updated&per_page=100`);
@@ -219,29 +260,17 @@ const loadProjects = async () => {
     const repos = await response.json();
 
     // 포크한 저장소와 목록에서 감출 저장소를 걸러낸다
-    allRepos = repos.filter(
+    const visibleRepos = repos.filter(
       (repo) => !repo.fork && !EXCLUDED_REPOS.includes(repo.name)
     );
 
-    // [상태: 빈 데이터]
-    if (allRepos.length === 0) {
-      showState(`<p>표시할 프로젝트가 없습니다.</p>`);
-      return;
-    }
-
-    // [상태: 성공]
-    stateEl.hidden = true;
-    renderFilters();
-    applyFilter();
+    setState({
+      status: visibleRepos.length === 0 ? "empty" : "success",
+      repos: visibleRepos,
+    });
 
   } catch (error) {
-    // [상태: 에러] — 재시도 버튼을 함께 보여준다
-    showState(`
-      <p>프로젝트를 불러올 수 없습니다.</p>
-      <p style="font-size:0.85rem">${error.message}</p>
-      <button type="button" class="btn btn--ghost" id="retryBtn">다시 시도</button>
-    `);
-    document.querySelector("#retryBtn").addEventListener("click", loadProjects);
+    setState({ status: "error", error: error.message });
   }
 };
 
