@@ -1,0 +1,62 @@
+# [08] 재현성 최종 확인
+# 실행 시각: 2026-09-17 22:41:29
+# 목적: DB 파일을 지우고 처음부터 4개 스크립트를 순서대로 돌려
+#       누구나 같은 결과를 얻는지 확인한다.
+
+$ rm -f academy.db
+$ sqlite3 academy.db < sql/01-schema.sql
+  종료 코드: 0
+$ sqlite3 academy.db < sql/02-seed.sql
+  종료 코드: 0
+$ sqlite3 academy.db < sql/03-queries.sql > results/03-queries-output.txt
+  종료 코드: 0
+$ sqlite3 academy.db < sql/04-bonus.sql > results/04-bonus-output.txt
+  종료 코드: 1  (B2 의도적 에러 때문에 1)
+
+# ---------- 예상치 못한 에러가 있는지 전수 점검 ----------
+$ grep -n 'error' results/*.txt
+results/04-bonus-output.txt:64:Runtime error near line 111: FOREIGN KEY constraint failed (19)
+results/04-bonus-output.txt:67:Runtime error near line 119: UNIQUE constraint failed: parent.phone (19)
+results/04-bonus-output.txt:70:Runtime error near line 127: NOT NULL constraint failed: student.name (19)
+results/04-bonus-output.txt:73:Runtime error near line 135: FOREIGN KEY constraint failed (19)
+results/04-bonus-output.txt:76:Runtime error near line 142: CHECK constraint failed: grade BETWEEN 1 AND 3 (19)
+
+# 위 5건은 전부 04-bonus.sql 의 B2 에서 의도한 제약 위반이다.
+# 03-queries-output.txt 에는 에러가 한 건도 없다.
+
+$ 최종 산출물
+docs/:
+CHECKLIST.md
+PLAN.md
+erd.dbml
+
+logs/:
+01-environment.log
+02-schema-build.log
+03-seed-load.log
+04-data-gaps-verify.log
+05-queries-run.log
+06-index-explain.log
+07-bonus-run.log
+08-reproducibility.log
+
+results/:
+03-queries-output.txt
+04-bonus-output.txt
+
+sql/:
+01-schema.sql
+02-seed.sql
+03-queries.sql
+04-bonus.sql
+
+$ 최종 DB 상태
+테이블           행수
+------------  --
+teacher       10
+parent        12
+student       15
+consultation  25
+payment       30
+# 주: payment 가 시드(31행)보다 1행 적은 30행인 이유는
+#     Q16 DELETE 가 퇴원생의 미납 청구 1건을 지웠기 때문이다. 의도된 동작.

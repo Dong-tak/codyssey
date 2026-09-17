@@ -1,0 +1,18 @@
+# [03] 샘플 데이터 입력
+# 실행 시각: 2026-09-17 22:40:34
+# 목적: 각 테이블에 10행 이상 넣고, FK 연결이 실제 관계를 갖게 한다.
+
+$ sqlite3 academy.db < sql/02-seed.sql
+(출력 없음 = 정상)
+
+# 입력 순서: teacher -> parent -> student -> consultation -> payment
+# 부모 테이블이 먼저 채워져야 자식 테이블 INSERT 가 통과한다.
+
+$ 테이블별 행 수 확인
+테이블           행수  요구10행
+------------  --  -----
+teacher       10  OK   
+parent        12  OK   
+student       15  OK   
+consultation  25  OK   
+payment       31  OK   

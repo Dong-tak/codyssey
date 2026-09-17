@@ -1,0 +1,36 @@
+# [06] 인덱스가 실제로 사용되는지 검증
+# 실행 시각: 2026-09-17 22:41:16
+# 목적: CREATE INDEX 를 썼다고 끝이 아니다. 옵티마이저가 정말 그 인덱스를 타는지
+#       EXPLAIN QUERY PLAN 으로 확인한다.
+
+$ 생성된 인덱스 목록
+인덱스명                      대상테이블       
+------------------------  ------------
+idx_consultation_student  consultation
+idx_payment_month         payment     
+
+# ===== 인덱스 있을 때 vs 없을 때 비교 =====
+$ [있음] EXPLAIN QUERY PLAN SELECT * FROM consultation WHERE student_id = 1;
+QUERY PLAN
+`--SEARCH consultation USING INDEX idx_consultation_student (student_id=?)
+   -> SEARCH ... USING INDEX : 색인으로 바로 찾아갔다
+
+$ [없음] DROP INDEX 후 같은 쿼리
+QUERY PLAN
+`--SCAN consultation
+   -> SCAN consultation : 25행을 처음부터 끝까지 훑었다 (Full Scan)
+
+$ 인덱스 복구 후 재확인
+QUERY PLAN
+`--SEARCH consultation USING INDEX idx_consultation_student (student_id=?)
+
+$ [집계] EXPLAIN QUERY PLAN SELECT pay_month, SUM(amount) FROM payment GROUP BY pay_month;
+QUERY PLAN
+`--SCAN payment USING INDEX idx_payment_month
+   -> SCAN ... USING INDEX : 이미 정렬된 인덱스를 읽어 GROUP BY 의 정렬 비용을 없앴다
+
+# 결론
+#  - 두 인덱스 모두 실제 실행계획에서 사용된다.
+#  - 인덱스는 공짜가 아니다. INSERT/UPDATE 마다 색인도 갱신해야 해서 쓰기는 느려진다.
+#  - 값 종류가 적은 컬럼(status 등)에 걸면 효과가 거의 없다.
+#  - PK/UNIQUE 에는 이미 인덱스가 자동 생성되므로 따로 만들 필요 없다.

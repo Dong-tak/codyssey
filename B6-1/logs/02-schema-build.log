@@ -1,0 +1,23 @@
+# [02] 스키마 생성
+# 실행 시각: 2026-09-17 22:40:22
+# 목적: CREATE TABLE 로 테이블 5개와 제약조건을 만든다.
+
+$ rm -f academy.db
+$ sqlite3 academy.db < sql/01-schema.sql
+(출력 없음 = 정상. 에러가 있으면 여기 찍힌다)
+
+$ sqlite3 academy.db ".tables"
+consultation  parent        payment       student       teacher     
+
+# 생성된 테이블 5개 확인 완료.
+
+$ sqlite3 academy.db "PRAGMA foreign_key_list(student);"   # student 의 FK 2개
+id  seq  table    from        to  on_update  on_delete  match
+--  ---  -------  ----------  --  ---------  ---------  -----
+0   0    teacher  teacher_id  id  NO ACTION  NO ACTION  NONE 
+1   0    parent   parent_id   id  NO ACTION  NO ACTION  NONE 
+
+$ sqlite3 academy.db "PRAGMA foreign_keys;"   # 0 이면 FK 가 꺼진 상태
+0
+# 중요: SQLite 는 접속할 때마다 FK 가 기본 OFF 다.
+#       그래서 모든 스크립트 첫 줄에 PRAGMA foreign_keys = ON; 을 넣었다.

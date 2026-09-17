@@ -1,0 +1,55 @@
+// B6-1 입시 학원 고객관리 DB - ERD 소스
+// https://dbdiagram.io 에 그대로 붙여넣으면 ERD 이미지가 생성된다.
+// Export > PNG 로 내려받아 docs/erd.png 로 저장할 것.
+
+Table teacher {
+  id        integer  [pk, increment]
+  name      varchar  [not null]
+  subject   varchar  [not null, note: '국어/수학/영어/탐구']
+  phone     varchar  [not null, unique]
+  hired_at  date     [not null]
+}
+
+Table parent {
+  id             integer  [pk, increment]
+  name           varchar  [not null]
+  phone          varchar  [not null, unique, note: '고객 식별 기준값']
+  email          varchar
+  registered_at  date     [not null]
+  Note: '학원의 실제 고객이자 결제 주체'
+}
+
+Table student {
+  id           integer  [pk, increment]
+  name         varchar  [not null]
+  school       varchar  [not null]
+  grade        integer  [not null, note: 'CHECK 1~3']
+  target_univ  varchar  [note: '미정 가능 → NULL 허용']
+  status       varchar  [not null, default: '재원', note: '재원/휴원/퇴원']
+  enrolled_at  date     [not null]
+  parent_id    integer  [not null, ref: > parent.id]
+  teacher_id   integer  [ref: > teacher.id, note: '등록 직후 미배정 가능 → NULL 허용']
+}
+
+Table consultation {
+  id            integer  [pk, increment]
+  student_id    integer  [not null, ref: > student.id]
+  teacher_id    integer  [not null, ref: > teacher.id]
+  consulted_at  date     [not null]
+  type          varchar  [not null, note: '입학/정기/성적/진로상담']
+  memo          text
+  next_action   varchar  [note: 'NULL = 후속 조치 미정']
+}
+
+Table payment {
+  id          integer  [pk, increment]
+  student_id  integer  [not null, ref: > student.id]
+  amount      integer  [not null, note: 'CHECK > 0']
+  pay_month   varchar  [not null, note: 'YYYY-MM']
+  paid_at     date     [note: 'NULL = 미납']
+  method      varchar  [note: '카드/계좌이체/현금']
+
+  indexes {
+    (student_id, pay_month) [unique, name: '같은 달 중복 청구 방지']
+  }
+}
