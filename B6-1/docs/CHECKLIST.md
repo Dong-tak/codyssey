@@ -75,7 +75,7 @@
 - [x] 실행 결과 폴더 1개 — `results/`
 - [x] (추가) 실습 증거 로그 8개 — `logs/`
 - [x] (추가) 작업 로그 — `docs/WORKLOG.md`
-- [ ] (선택) ERD 이미지 1개 — `docs/erd.png`
+- [x] (선택) ERD 이미지 1개 — `docs/erd.png` (dbdiagram.io 로 생성)
 
 ---
 

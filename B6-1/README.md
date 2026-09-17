@@ -54,7 +54,8 @@ B6-1/
 │   ├── PLAN.md          기획서 (주제 선정 · ERD · 설계 근거)
 │   ├── WORKLOG.md       작업 로그 (막혔던 지점과 해결 과정)
 │   ├── CHECKLIST.md     과제 요구사항 체크리스트
-│   └── erd.dbml         ERD 소스 (dbdiagram.io 용)
+│   ├── erd.dbml         ERD 소스 (dbdiagram.io 용)
+│   └── erd.png          ERD 다이어그램 이미지
 └── academy.db           생성된 DB 파일
 ```
 
@@ -84,6 +85,17 @@ B6-1/
 ## 3. 스키마
 
 ### ERD
+
+![B6-1 ERD](docs/erd.png)
+
+> [dbdiagram.io](https://dbdiagram.io) 로 생성했다. 원본 소스는 [`docs/erd.dbml`](docs/erd.dbml) 이고,
+> 수정하려면 그 파일을 dbdiagram.io 에 붙여넣으면 된다.
+>
+> 선 끝의 표기가 관계의 방향을 보여준다.
+> **막대(|) 쪽이 1, 갈래(<) 쪽이 N** 이다. 갈래가 붙은 쪽 테이블이 FK를 가진 자식이다.
+
+<details>
+<summary>텍스트 버전 ERD (이미지가 안 보일 때)</summary>
 
 ```
   teacher                        parent
@@ -120,7 +132,8 @@ B6-1/
             └──────────────┘    └──────────────┘
 ```
 
-이미지 ERD가 필요하면 [`docs/erd.dbml`](docs/erd.dbml) 을 [dbdiagram.io](https://dbdiagram.io) 에 붙여넣으면 된다.
+</details>
+
 
 ### 1:N 관계 5개
 

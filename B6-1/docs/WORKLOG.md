@@ -20,6 +20,7 @@
 | 7 | 인덱스가 실제로 쓰이는지 실행계획 확인 | [`06-index-explain.log`](../logs/06-index-explain.log) |
 | 8 | 보너스 3종 실행 | [`07-bonus-run.log`](../logs/07-bonus-run.log) |
 | 9 | 처음부터 재현되는지 최종 확인 | [`08-reproducibility.log`](../logs/08-reproducibility.log) |
+| 10 | ERD 이미지 생성 (dbdiagram.io) | [`erd.dbml`](erd.dbml) → [`erd.png`](erd.png) |
 
 ---
 
